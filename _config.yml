@@ -1,0 +1,36 @@
+title: Kig
+description: 网络安全，个人学习，！脚本小子...
+permalink: ':title/'
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+site-twitter: #if your site has a twitter account, enter it here
+host: 172.17.37.59
+port: 80
+
+# Author Settings
+author: Kiglass # add your name
+author-img: david-freeman.jpg # add your photo
+about-author: <p>好好活动、好好学习、好好游戏、好好吃饭、好好休息、要过一个开心有趣，精神百倍的人生...</p><br><br> 我将记录并分享<br> <strong>Open|Free|Share</strong> <br><a href=https://blog.csdn.net/qq_25899635 target="_blank"><small>csdn迁徙中</small></a></a> # add description
+social-twitter: Kiglass1 
+social-github: kiggless # add your Github handle
+social-email: iawia885330217@gmail.com
+
+# Disqus
+discus-identifier: http-iicarus-xyz # add your discus identifier
+comments: true
+
+# Tracker
+analytics: # Google Analytics
+
+# Build Settings
+markdown: kramdown
+plugins:
+  - jekyll-sitemap
+  - jekyll-paginate
+  - jekyll-feed
+  - jemoji
+
+paginate: 8
+paginate_path: "/page/:num"
+
+exclude: ["node_modules", "gulpfile.js", "package.json", "yarn.lock"]

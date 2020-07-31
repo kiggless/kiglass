@@ -1,0 +1,14 @@
+I"�<hr />
+<h3 id="序言"><font color="0066FF">序言</font></h3>
+<font color="green">在Eurocrypt 2002大会上，Vaudenay介绍了针对CBC模式的"Padding Oracle Attack"。它可以在不知道秘钥的情况下，通过对padding bytes的尝试，还原明文，或者构造出任意明文的密文。加密算法本身没有太大的问题，问题出在使用的方式上。</font>
+<h3 id="原理"><font color="0066FF">原理</font></h3>
+<p>在此以DES为例:在分组加密算法在实现加/解密时，需要把消息进行分组(block),block的大小常见的有64bit、128bit、256bit等。以CBC模式为例，其实现加密的过程大致如下：
+<img src="/assets/img/Padding_Attack/encode.png" alt="image" width="1350px" />
+在这个过程中最后一个分组的消息长度没有达到block的大小，则需要填充一些字节，被称为padding。以8个字节为一个block为例:
+比如明文是FIG,长度为3个字节，则剩下5个字节被填充了0x05,0x05,0x05,0x05,0x05这5个相同的字节，每个字节的值等于需要填充的字节长度。如果明文长度刚好为8个字节，如PLANTAIN,则后面需要填充8个字节的padding,其值为0x08。这种填充方法，遵循的是最常见的PKCS#5标准,可参见下方填充示意图:
+<img src="/assets/img/Padding_Attack/PKCS_5.png" alt="image" width="1350px" />
+假设明文为:</p>
+<blockquote>
+  <p>BRIAN;12;2;</p>
+</blockquote>
+:ET

